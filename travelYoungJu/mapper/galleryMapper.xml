@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.res.dao.IF_galleryDAO">
+	<insert id="insertOne" parameterType="com.res.vo.GalleryVO">
+	insert into gallery values(gallery_seq.nextval,#{userid},#{gallery_title},#{gallery_text},#{gallery_region},default,default,default)
+	</insert>
+	<insert id="saveFile">
+	insert into files values((select max(gallery_num) from gallery),#{filename})
+	</insert>
+	<insert id="updateFile">
+	insert into files values(#{files_num},#{gallery_filename})
+	</insert>
+	<insert id="insertComment" >
+	insert into gcomment values(gcomment_seq.nextval,#{comment_num},#{comment_text},default,#{comment_id})
+	</insert>
+	<insert id="insertJoin" >
+	insert into member values(#{user_name},#{user_id},#{user_pass},#{user_phone_num},#{user_email})
+	</insert>
+	<insert id="insertRes" >
+	insert into reservation values(res_seq.nextval,#{res_title},#{res_addr},#{res_img_addr},#{res_price},#{res_id},#{res_start},#{res_end})
+	</insert>
+	
+	
+	<select id="selectAll" resultType="com.res.vo.GalleryVO" parameterType="com.res.vo.PageVO">
+		select first.*from(select sencond.*,rownum as rnum from 
+		(select *from gallery order by gallery_date desc,gallery_num desc)sencond)
+		first where rnum between #{startNo} and #{endNo}
+	</select>
+	<select id="selectRegion" resultType="com.res.vo.GalleryVO">
+		select first.*from(select sencond.*,rownum as rnum from 
+		(select *from gallery order by gallery_date desc,gallery_num desc)sencond)
+		first where rnum between #{startNo} and #{endNo} and gallery_region=#{gallery_region}
+	</select>
+	
+	<select id="selectCnt" resultType="int">
+		select count(*) from gallery
+	</select>
+	<select id="selectFile" resultType="com.res.vo.FilesVO">
+		select * from files where files_num=#{filenum}
+	</select>
+		<select id="selectText" resultType="com.res.vo.GalleryVO">
+		select * from gallery where gallery_num=#{gallery_num}
+	</select>
+	<select id="selectImg" resultType="com.res.vo.FilesVO">
+		select * from files where files_num=#{gallery_num}
+	</select>
+	<select id="selectCmt" resultType="com.res.vo.GcommentVO">
+		select * from gcomment where comment_num=#{gallery_num}
+	</select>
+	<select id="selectId" resultType="com.res.vo.MemberVO">
+		select * from member where user_id=#{member_id}
+	</select>
+	<select id="selectRank" resultType="com.res.vo.ReservationVO">
+		select*from(select rownum as rnum,res.* from(select res_title,max(res_addr) as res_addr,max(res_price) as res_price,max(res_img_addr) as res_img_addr,count(*) from reservation group by res_title order by count(*) desc)res) where rnum <![CDATA[<=]]> 3
+	</select>
+	<select id="selectChk" resultType="com.res.vo.ReservationVO">
+		select*from reservation where res_id=#{res_id}
+	</select>
+	
+	
+
+
+	<update id="updateCnt">
+		update gallery set gallery_cnt=#{gallery_cnt}+1 where gallery_num=#{gallery_num}
+	</update>
+	<update id="updateGood">
+		update gallery set gallery_good=#{gallery_good}+1 where gallery_num=#{gallery_num}
+	</update>
+	
+	<update id="updateText">
+		update gallery set gallery_title=#{gallery_title},gallery_text=#{gallery_text},gallery_region=#{gallery_region} where gallery_num=#{gallery_num}
+	</update>
+	<update id="updateMember">
+		update member set user_pass=#{user_pass},user_phone_num=#{user_phone_num},user_email=#{user_email} where user_id=#{user_id}
+	</update>
+	
+	
+	
+	
+	<delete id="deleteImg">
+		delete from files where gallery_filename=#{img_name}
+	</delete>
+	<delete id="deleteText">
+		delete from gallery where gallery_num=#{gallery_num}
+	</delete>
+	<delete id="deleteImgnum">
+		delete from files where files_num=#{gallery_num}
+	</delete>
+	<delete id="deleteCmt">
+		delete from gcomment where comment_num=#{gallery_num}
+	</delete>
+	
+</mapper>
