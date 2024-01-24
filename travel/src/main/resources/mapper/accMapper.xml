@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.res.dao.IF_accDAO">
+
+	<insert id="insert" parameterType="com.res.vo.ReservVO">
+		insert into accomodation values
+		(acc_seq.nextval,#{accid},'유저',#{accTitle},#{accContents},default)
+		<!-- (acc_seq.nextval,'유저','제목1','내용1',default) -->
+	</insert>
+	<select id="totalcnt" resultType="int">
+		select count(*) from
+		accomodation
+	</select>
+	<select id="selectAll" parameterType="com.res.vo.RpageVO"
+		resultType="com.res.vo.ReservVO">
+		select t.* from (select sub.*, rownum as rnum from (select
+		* from accomodation order by accdate DESC, accnum desc)sub)t where
+		rnum between #{startNo} and #{endNo}
+	</select>
+	
+	<select id="selectAnswer" parameterType="int" resultType="com.res.vo.ReservAnswerVO">
+		select * from accAnswer where accNum=#{acvno}
+	</select>
+
+	<insert id="saveFile">
+		insert into accFiles values ((select max(accnum) from accomodation),
+		#{fname})
+	</insert>
+
+	<select id="getFile"  resultType="String">
+		select accFilename from accFiles where accNum=#{passNum}
+	</select>
+
+	<select id="selectOne" parameterType="int"
+		resultType="com.res.vo.ReservVO">
+		select * from accomodation where accNum=#{acvno}
+	</select>
+	<select id="getFiles" parameterType="int" resultType="String">
+		select *
+		from accFiles where accNum=#{acvno}
+	</select>
+	<delete id="deleteOne" parameterType="int">
+		delete from accomodation where accNum=#{dno}
+	</delete>
+	<delete id="deleteFile" parameterType="int">
+		delete from accFiles where accNum=#{dno}
+	</delete>
+	<delete id ="deleteFile2">
+		delete from accFiles where accFilename=#{dfile}
+	</delete>
+	<insert id="insertAnswer" parameterType="com.res.vo.ReservAnswerVO">
+	insert into accAnswer values (accanswer_seq.nextval,#{accNum},#{answerWriter},#{answerContents},default) 
+	</insert>
+	<update id="updateOne">
+		update accomodation set accTitle=#{accTitle},accContents=#{accContents} where accNum=#{accNum}
+	</update>
+	<insert id="updateFile" parameterType="com.res.vo.TempFileVO">
+		insert into accFiles values ( #{accNum},#{accFileName} )
+	</insert>
+		<insert id="insertTravel" parameterType="com.res.vo.TravelVO">
+		insert into accFiles values ( #{contentid},#{traveltitle},#{travelimg},default )
+	</insert>
+</mapper>

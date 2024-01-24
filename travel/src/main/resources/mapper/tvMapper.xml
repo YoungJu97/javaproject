@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.res.dao.IF_tripDAO">
+<insert id="insertAll" parameterType="com.res.vo.TVVO"> insert into tripview values (tv_seq.nextval,#{view_region},#{view_wr} ,#{view_star},#{view_title},#{view_comment},default,0) </insert>
+<select id="selectAll" resultType="com.res.vo.TVVO"> WITH RankedFiles AS ( SELECT t.*, f.file_name, ROW_NUMBER() OVER (PARTITION BY t.view_num ORDER BY f.file_num) AS file_rank FROM ( SELECT sub.*, rownum as rnum FROM ( SELECT * FROM tripview ) sub ) t LEFT JOIN tripview_files f ON t.view_num = f.view_num WHERE rnum BETWEEN #{startNo} AND #{endNo} ) SELECT * FROM RankedFiles WHERE file_rank = 1 ORDER BY view_date DESC </select>
+<update id="updateCnt"> update tripview set view_cnt=view_cnt+1 where view_num=#{tvo} </update>
+<select id="selectOne" parameterType="String" resultType="com.res.vo.TVVO"> select * from tripview where view_num=#{no} </select>
+<update id="updateOne" parameterType="com.res.vo.TVVO"> update tripview set view_region=#{view_region}, view_wr=#{view_wr},view_star=#{view_star}, view_title=#{view_title}, view_comment=#{view_comment} where view_num=#{view_num} </update>
+<delete id="deleteNum" parameterType="String"> delete from tripview where view_num=#{tvo} </delete>
+<insert id="saveFile"> insert into tripview_files values (tvf_seq.nextval, (select max(view_num) from tripview),#{fname}) </insert>
+<select id="selectFiles" resultType="String"> select file_name from tripview_files where view_num=#{tvo} </select>
+<select id="totalcnt" resultType="int"> select count(*) from tripview </select>
+<select id="regionCnt" resultType="int"> select count(*) from tripview where view_region=#{region} </select>
+<delete id="deleteFile" parameterType="String"> delete from tripview_files where file_name = #{filename} </delete>
+<insert id="addFile"> insert into tripview_files values (tvf_seq.nextval, #{viewNum}, #{fname}) </insert>
+<select id="thumb"> select file_name from view_num=#{vno}; </select>
+<select id="selectListByRegion" resultType="com.res.vo.TVVO"> WITH RankedFiles AS ( SELECT t.*, f.file_name, ROW_NUMBER() OVER (PARTITION BY t.view_num ORDER BY f.file_num) AS file_rank FROM ( SELECT sub.*, rownum AS rnum FROM ( SELECT * FROM tripview WHERE view_region = #{region} ) sub ) t LEFT JOIN tripview_files f ON t.view_num = f.view_num WHERE rnum BETWEEN #{startNo} AND #{endNo} ) SELECT * FROM RankedFiles WHERE file_rank = 1 ORDER BY view_date DESC </select>
+</mapper>
