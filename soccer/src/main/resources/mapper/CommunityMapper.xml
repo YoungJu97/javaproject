@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.epl.dao.IF_communityDAO">
+	<insert id="communityadd">
+	insert into community values(comnum.nextval,#{com_id},#{com_title},#{com_text},default,default)
+	</insert>
+	<insert id="communityfile">
+	insert into com_file values((select max(com_num) from community),#{com_filename})
+	</insert>
+	<insert id="communitycomment">
+	insert into com_comment values(#{com_num},#{com_id},#{com_text})
+	</insert>
+	
+	<select id="selectcommunity" resultType="com.epl.vo.CommunityVO">
+	select first.*from(select sencond.*,rownum as rnum from 
+		(select *from community order by com_date desc,com_num desc)sencond)
+		first where rnum between #{startNo} and #{endNo}
+	</select>
+	<select id="selectonefile" resultType="com.epl.vo.CommunityfilesVO">
+	select * from com_file where com_num=#{com_num}
+	</select>
+	<select id="selectonecommunity" resultType="com.epl.vo.CommunityVO">
+	select * from community where com_num=#{com_num}
+	</select>
+	<select id="selectcomment" resultType="com.epl.vo.CommentVO">
+	select * from com_comment where com_num=#{com_num}
+	</select>
+	<select id="selectCnt" resultType="int">
+		select count(*) from community
+	</select>
+	
+	<delete id="communitydelete">
+	delete from community where com_num=#{com_num}
+	</delete>
+	<delete id="communitydeletefile">
+	delete from com_file where com_num=#{com_num}
+	</delete>
+	
+	<update id="communitychk" >
+	update community set com_chk=#{com_chk}+1 where com_num=#{com_num}
+	</update>
+	<update id="communitymodify" >
+	update community set com_title=#{com_title},com_text=#{com_text} where com_num=#{com_num}
+	</update>
+	<update id="communitymodifyfile" >
+	update com_file set com_filename=#{com_filename} where com_num=#{com_num}
+	</update>
+	
+</mapper>

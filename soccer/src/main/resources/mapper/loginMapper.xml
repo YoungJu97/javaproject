@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.epl.dao.IF_loginDAO">
+	<insert id="joininsert" parameterType="com.epl.vo.EpluserVO">
+	insert into epl_user values(#{username},#{s_number},#{user_id},#{user_pass})
+	</insert>
+	<select id="selectid" resultType="com.epl.vo.EpluserVO">
+	select * from epl_user where user_id=#{user_id}
+	</select>
+	<select id="selectevery" resultType="com.epl.vo.EpluserVO">
+	select * from epl_user
+	</select>
+	<update id="updatepass">
+	update epl_user set user_pass=#{user_pass} where user_id=#{user_id}
+	</update>
+</mapper>

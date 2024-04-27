@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.epl.dao.IF_shopDAO">
+	<insert id="shopinsert" parameterType="com.epl.vo.ProductVO">
+	insert into product values(pronum.nextval,#{pro_title},#{pro_price},#{pro_id},#{pro_xl},#{pro_l},#{pro_m},#{pro_s})
+	</insert>
+	<insert id="fileinsert" parameterType="com.epl.vo.ProductfilesVO">
+	insert into pro_file values((select max(pro_num) from product),#{pro_filename})
+	</insert>
+	<insert id="purchaseinsert" parameterType="com.epl.vo.PurchaseVO">
+	insert into purchase values(purnum.nextval,#{pur_pronum},#{pur_title},#{pur_price},#{pur_id},#{pur_addr},#{pur_img},#{pur_xl},#{pur_l},#{pur_m},#{pur_s})
+	</insert>
+	
+	<select id="selectcnt" resultType="int">
+		select count(*) from product
+	</select>
+	<select id="shopselectpage" resultType="com.epl.vo.ProductVO">
+	select first.*from(select sencond.*,rownum as rnum from 
+		(select *from product order by pro_num desc)sencond)
+		first where rnum between #{startNo} and #{endNo}
+	</select>
+	<select id="fileselectpage" resultType="com.epl.vo.ProductfilesVO">
+	select first.*from(select sencond.*,rownum as rnum from 
+		(select *from pro_file order by pro_num desc)sencond)
+		first where rnum between #{startNo} and #{endNo}
+	</select>
+	<select id="shopselect" resultType="com.epl.vo.ProductVO">
+	select * from product
+	</select>
+	<select id="fileselect" resultType="com.epl.vo.ProductfilesVO">
+	select * from pro_file
+	</select>
+	<select id="shoponeselect" resultType="com.epl.vo.ProductVO">
+	select * from product where pro_num=#{pro_num}
+	</select>
+	<select id="fileoneselect" resultType="com.epl.vo.ProductfilesVO">
+	select * from pro_file where pro_num=#{pro_num}
+	</select>
+	<select id="adminlist" resultType="com.epl.vo.PurchaseVO">
+	select * from purchase 
+	</select>
+	<select id="purchaselist" resultType="com.epl.vo.PurchaseVO">
+	select * from purchase where pur_id=#{pur_id}
+	</select>
+	
+	<delete id="purchasedelete">
+	delete from purchase where pur_num=#{pur_num}
+	</delete>
+	
+	<update id="sizecntupdate" >
+	update product set pro_xl=#{pro_xl},pro_l=#{pro_l},pro_m=#{pro_m},pro_s=#{pro_s} where pro_num=#{pro_num}
+	</update>
+</mapper>
